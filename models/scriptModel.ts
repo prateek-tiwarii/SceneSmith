@@ -3,8 +3,9 @@ import mongoose from "mongoose";
 const scriptSchema = new mongoose.Schema({
   title: { type: String, required: true },
   description: { type: String, required: true },
-  content: { type: String, required: true },
-  tags: { type: [String], default: [] },
+   genre: { type: String, required: true },              // e.g. "sci-fi, anime, noir"
+  negativePrompt: { type: String, default: "" },        // What to avoid globally
+  tags: { type: [String], default: [] },                // Search/filters
   scenes: [{ type: mongoose.Schema.Types.ObjectId, ref: "Scene" }],
   author: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
 },

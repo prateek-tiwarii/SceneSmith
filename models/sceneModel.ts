@@ -26,7 +26,6 @@ const SceneSchema = new mongoose.Schema(
     },
     imageUrl: {
       type: String, 
-      required: true,
     },
     resolution: {
       type: String, 
@@ -34,7 +33,7 @@ const SceneSchema = new mongoose.Schema(
     },
     modelUsed: {
       type: String,
-      required: true,
+      default: "lama2.0",     
     },
     generationTime: {
       type: Number,
@@ -53,5 +52,7 @@ const SceneSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.models.Scene ||
+const Scene =  mongoose.models.Scene ||
   mongoose.model("Scene", SceneSchema);
+
+export default Scene;
