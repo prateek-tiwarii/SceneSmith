@@ -13,16 +13,17 @@ export async function POST(request: NextRequest) {
     }
     const userId = session.user?.id;
 
-    const {title , description , content, tags} = await request.json();
-    if (!title || !description || !content) {
+    const {title , description , genre, tags , negativePrompt} = await request.json();
+    if (!title || !description || !genre || !negativePrompt) {
       return NextResponse.json({ error: "All fields are required" }, { status: 400 });
     }
     const newScript = new Script({
       title,
       description,
-      content,
+      negativePrompt,
+      genre,
       tags: tags || [],
-      user: userId,
+      author: userId,
     });
 
     await newScript.save();

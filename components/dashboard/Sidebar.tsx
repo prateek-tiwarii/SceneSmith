@@ -28,13 +28,7 @@ const Sidebar = () => {
         href: "/dashboard/settings"
       }
     ],
-    // "premium": [
-    //   {
-    //     name: "Go Premium",
-    //     icon: Sparkles,
-    //     href: "/dashboard/premium"
-    //   }
-    // ]
+    
   }
 
   const handleTabChange = (tab: string) => {
@@ -49,16 +43,16 @@ const Sidebar = () => {
           href={'/dashboard'}
           className='italic text-xl md:text-2xl font-bold text-[#c3c3c3] mt-4 justify-center flex'
         >
-          <span className='hidden md:block'>Formix</span>
+          <span className='hidden md:block'>Scene-Smith</span>
         </Link>
 
         <div className='px-2 md:px-4 flex justify-center'>
           <button
-            onClick={() => router.push('/dashboard/form/create')}
+            onClick={() => router.push('/dashboard/script/create')}
             className="text-white bg-[#7D5FF3] hover:bg-[#7D5FF3]/60 flex items-center justify-center md:justify-start gap-0 md:gap-2 text-sm px-2 md:px-3 py-2 rounded-md cursor-pointer transition-colors duration-200 w-full"
           >
             <Plus size={16} />
-            <span className='hidden md:inline'>Create New Form</span>
+            <span className='hidden md:inline'>Create New Script</span>
           </button>
         </div>
 

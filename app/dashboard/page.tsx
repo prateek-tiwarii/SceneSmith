@@ -8,6 +8,7 @@ import { CheckCheck, File, Sparkles } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 // import { useAuth } from '@/hooks/useAuth'
 import axios from 'axios'
+import RecentScripts from '@/components/dashboard/RecentScript'
 
 
 
@@ -74,7 +75,7 @@ const DashboardPage = () => {
         <div className='text-sm font-bold text-[#F8F8F8]'>
           Recent Forms
         </div>
-        {/* <RecentForms setCreateFormModal={setCreateFormModal}/> */}
+        <RecentScripts/>
       </div>
     </div>
 
