@@ -1,6 +1,5 @@
-// SceneSelector.tsx
 'use client'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
@@ -24,29 +23,117 @@ interface SceneFormData {
   status: 'pending' | 'completed' | 'failed';
 }
 
-interface SceneSelectorProps {
-  scriptData?: {
-    title: string;
-    description: string;
-    genre: string;
-    negativePrompt: string;
-    tags: string[];
-  };
-  onSceneChange?: (scene: SceneFormData) => void;
+interface ScriptDataInterface {
+  title: string;
+  description: string;
+  genre: string;
+  negativePrompt: string;
+  tags: string[];
 }
 
-const SceneSelector: React.FC<SceneSelectorProps> = ({ scriptData, onSceneChange }) => {
+
+const generatePrompt = async(ScriptDescription :string , title:string , negative:string , resolution:string , genre:string , SceneDescription:string )=>{
+
+    const prompt = `You are a scene generator. Create a scene based on the following details:
+    - Script Description: ${ScriptDescription}
+    - Title: ${title}
+    - Negative Prompt: ${negative}
+    - Resolution: ${resolution}
+    - Genre: ${genre}
+    - Scene Description: ${SceneDescription}
+    `;
+
+    return prompt;
+
+}
+
+
+
+const SceneSelector = ({ projectId }: { projectId?: string }) => {
   const [activeTab, setActiveTab] = useState("basic");
+  const [loading, setLoading] = useState(true);
+  const [script, setScript] = useState<ScriptDataInterface>({
+    title: "",
+    description: "",
+    genre: "",
+    negativePrompt: "",
+    tags: []
+  });
+
   const [scene, setScene] = useState<SceneFormData>({
     title: "",
     description: "",
     resolution: "1024x1024",
     modelUsed: "lama2.0",
     order: 1,
-    negativePrompt: scriptData?.negativePrompt || "",
+    negativePrompt: "",
     generatedPrompt: "",
     status: "pending"
   });
+
+  const fetchScriptData = async (id: string) => {
+    try {
+      setLoading(true);
+      const response = await fetch(`/api/project/${id}`);
+      console.log(response);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error fetching script data:", error);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatScriptData = (apiData: any): ScriptDataInterface => {
+    if (!apiData) {
+      return {
+        title: "",
+        description: "",
+        genre: "",
+        negativePrompt: "",
+        tags: []
+      };
+    }
+    
+    return {
+      title: apiData.title || "",
+      description: apiData.description || "",
+      genre: apiData.genre || "",
+      negativePrompt: apiData.negativePrompt || "",
+      tags: apiData.tags || [],
+    };
+  };
+
+  useEffect(() => {
+    const loadResponse = async () => {
+      if (projectId) {
+        const response = await fetchScriptData(projectId);
+        if (!response) {
+          console.log("Invalid API response");
+          return;
+        }
+        const formattedScript = formatScriptData(response);
+        setScript(formattedScript);
+        
+        // Update scene negative prompt with script's negative prompt
+        setScene(prev => ({
+          ...prev,
+          negativePrompt: formattedScript.negativePrompt
+        }));
+      } else {
+        setLoading(false);
+      }
+    };
+    
+    loadResponse();
+  }, [projectId]);
 
   const resolutionOptions = [
     { value: "512x512", label: "512×512 (Square)" },
@@ -66,26 +153,14 @@ const SceneSelector: React.FC<SceneSelectorProps> = ({ scriptData, onSceneChange
     { value: "flux-pro", label: "Flux Pro" }
   ];
 
-  const updateScene = (updates: Partial<SceneFormData>) => {
-    const updatedScene = { ...scene, ...updates };
-    
-    // Auto-generate prompt when title or description changes
-    if (updates.title || updates.description) {
-      updatedScene.generatedPrompt = generatePrompt(updatedScene, scriptData);
-    }
-    
-    setScene(updatedScene);
-    onSceneChange?.(updatedScene);
-  };
-
-  const generatePrompt = (sceneData: SceneFormData, script?: any) => {
+  const generatePrompt = (sceneData: SceneFormData, scriptData: ScriptDataInterface) => {
     if (!sceneData.title && !sceneData.description) return "";
     
     const parts = [];
     
     // Add script genre if available
-    if (script?.genre) {
-      parts.push(`${script.genre} style`);
+    if (scriptData.genre) {
+      parts.push(`${scriptData.genre} style`);
     }
     
     // Add scene title and description
@@ -98,16 +173,40 @@ const SceneSelector: React.FC<SceneSelectorProps> = ({ scriptData, onSceneChange
     }
     
     // Add script tags if available
-    if (script?.tags && script.tags.length > 0) {
-      parts.push(script.tags.join(', '));
+    if (scriptData.tags && scriptData.tags.length > 0) {
+      parts.push(scriptData.tags.join(', '));
     }
     
     return parts.join(', ');
   };
 
+  const updateScene = (updates: Partial<SceneFormData>) => {
+    const updatedScene = { ...scene, ...updates };
+    
+    // Auto-generate prompt when title or description changes
+    if (updates.title !== undefined || updates.description !== undefined) {
+      updatedScene.generatedPrompt = generatePrompt(updatedScene, script);
+    }
+    
+    setScene(updatedScene);
+  };
+
+  if (loading) {
+    return (
+      <div className="border-r-[1px] border-[#2E2E2E] h-full flex flex-col text-[#8E8E90] pt-2 px-2 bg-[#1D1E21]">
+        <div className="flex items-center justify-center h-full">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#7D5FF3] mx-auto mb-4"></div>
+            <p className="text-[#8E8E90]">Loading script data...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="border-r-[1px] border-[#2E2E2E] h-full flex flex-col text-[#8E8E90] pt-2 px-2 bg-[#1D1E21]">
-      <Tabs defaultValue="basic" value={activeTab} onValueChange={setActiveTab} className="w-full bg-[#1A1C22] rounded-lg p-1 flex flex-col gap-1">
+      <Tabs defaultValue="basic" value={activeTab} onValueChange={setActiveTab} className="w-full h-full flex flex-col bg-[#1A1C22] rounded-lg">
         <TabsList className="w-full bg-[#1A1C22] border border-[#3A3A3A] rounded-lg p-1 flex gap-1">
           <TabsTrigger
             value="basic"
@@ -132,11 +231,11 @@ const SceneSelector: React.FC<SceneSelectorProps> = ({ scriptData, onSceneChange
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="basic" className="flex-1 overflow-hidden">
+        <TabsContent value="basic" className="flex-1 overflow-y-auto">
           <ScrollArea className="h-full px-3">
             <div className="space-y-6">
               {/* Script Context Card */}
-              {scriptData && (
+              {script.title && (
                 <Card className="bg-[#2A2D34]/50 border-[#3A3A3A]">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm text-[#C0C0C0]">Script Context</CardTitle>
@@ -144,22 +243,26 @@ const SceneSelector: React.FC<SceneSelectorProps> = ({ scriptData, onSceneChange
                   <CardContent className="space-y-2 text-xs">
                     <div>
                       <span className="text-[#8E8E90]">Title:</span>
-                      <span className="text-white ml-2">{scriptData.title}</span>
+                      <span className="text-white ml-2">{script.title}</span>
+                    </div>
+                    <div>
+                      <span className="text-[#8E8E90]">Tags:</span>
+                      <span className="text-white ml-2">{script.tags.join(", ")}</span>
                     </div>
                     <div>
                       <span className="text-[#8E8E90]">Genre:</span>
-                      <span className="text-white ml-2">{scriptData.genre}</span>
+                      <span className="text-white ml-2">{script.genre}</span>
                     </div>
-                    {scriptData.tags.length > 0 && (
+                    {script.tags.length > 0 && (
                       <div className="flex flex-wrap gap-1 mt-2">
-                        {scriptData.tags.slice(0, 3).map((tag) => (
+                        {script.tags.slice(0, 3).map((tag) => (
                           <Badge key={tag} className="bg-[#7D5FF3]/20 text-[#7D5FF3] text-xs px-1 py-0">
                             {tag}
                           </Badge>
                         ))}
-                        {scriptData.tags.length > 3 && (
+                        {script.tags.length > 3 && (
                           <Badge className="bg-[#7D5FF3]/20 text-[#7D5FF3] text-xs px-1 py-0">
-                            +{scriptData.tags.length - 3}
+                            +{script.tags.length - 3}
                           </Badge>
                         )}
                       </div>
@@ -330,7 +433,7 @@ const SceneSelector: React.FC<SceneSelectorProps> = ({ scriptData, onSceneChange
                   <div className="flex items-center justify-between p-2 bg-[#2A2D34]/50 rounded">
                     <span className="text-xs text-[#C0C0C0]">Script Genre</span>
                     <Badge className="bg-[#7D5FF3]/20 text-[#7D5FF3] text-xs">
-                      {scriptData?.genre || 'Not set'}
+                      {script.genre || 'Not set'}
                     </Badge>
                   </div>
                   <div className="flex items-center justify-between p-2 bg-[#2A2D34]/50 rounded">
@@ -342,7 +445,7 @@ const SceneSelector: React.FC<SceneSelectorProps> = ({ scriptData, onSceneChange
                   <div className="flex items-center justify-between p-2 bg-[#2A2D34]/50 rounded">
                     <span className="text-xs text-[#C0C0C0]">Script Tags</span>
                     <Badge className="bg-green-500/20 text-green-400 text-xs">
-                      {scriptData?.tags?.length || 0} tags
+                      {script.tags?.length || 0} tags
                     </Badge>
                   </div>
                 </div>

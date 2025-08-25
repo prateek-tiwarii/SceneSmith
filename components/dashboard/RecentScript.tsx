@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Pointer } from "@/components/magicui/pointer";
 import { motion } from "motion/react";
+import Router from 'next/router';
 import { 
   Edit, 
   Plus, 
@@ -21,6 +22,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
 
 interface Script {
   id: string;
@@ -34,64 +36,63 @@ interface Script {
   status: 'draft' | 'completed' | 'in-progress';
 }
 
-// Mock data - replace with your API call
-
-const mockScripts: Script[] = [
-  {
-    id: '1',
-    title: 'Cyberpunk Adventure',
-    description: 'A futuristic story set in a neon-lit city where hackers fight against corporate tyranny.',
-    genre: 'cyberpunk',
-    tags: ['neon', 'futuristic', 'urban', 'night'],
-    createdAt: '2024-01-15',
-    author: 'John Doe',
-    scenesCount: 12,
-    status: 'completed'
-  },
-  {
-    id: '2',
-    title: 'Medieval Fantasy Quest',
-    description: 'Knights and wizards embark on an epic journey to save the realm from an ancient evil.',
-    genre: 'fantasy',
-    tags: ['medieval', 'magic', 'dragons', 'epic'],
-    createdAt: '2024-01-12',
-    author: 'Jane Smith',
-    scenesCount: 8,
-    status: 'in-progress'
-  },
-  {
-    id: '3',
-    title: 'Space Station Horror',
-    description: 'Trapped aboard a remote space station, the crew discovers mysterious creatures.',
-    genre: 'horror',
-    tags: ['space', 'horror', 'survival', 'alien'],
-    createdAt: '2024-01-10',
-    author: 'Mike Johnson',
-    scenesCount: 5,
-    status: 'draft'
-  }
-];
 
 
 const RecentScripts = () => {
-  const [scripts, setScripts] = useState<Script[]>(mockScripts);
+  const [scripts, setScripts] = useState<Script[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
-  const scriptData = async ()=>{
-    try{
-    const response = await axios.get('/api/project/get-all');
-    console.log(response.data);
-    return response.data;
-    
-    // setScripts(response.data);
-    }catch(error){
+  
+  const fetchScriptData = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get('/api/project/get-all');
+      console.log(response.data);
+      return response.data.scripts;
+    } catch (error) {
       console.error("Error fetching script data:", error);
+      setError("Failed to fetch scripts");
+      return [];
+    } finally {
+      setLoading(false);
     }
-  }
+  };
 
-  useEffect(()=>{
-  const response = scriptData();
-//   setScripts(response);
-  },[])
+  // Transform API data to match our interface
+  const transformApiData = (apiScripts: any[]): Script[] => {
+    return apiScripts.map((script: any) => ({
+      id: script._id,
+      title: script.title,
+      description: script.description,
+      genre: script.genre,
+      tags: script.tags || [],
+      createdAt: script.createdAt,
+      author: script.author?.name || 'Unknown Author',
+      scenesCount: script.scenes?.length || 0,
+      status: script.scenes?.length > 0 ? 'in-progress' : 'draft' // Determine status based on scenes
+    }));
+  };
+
+  useEffect(() => {
+    const loadScripts = async () => {
+      try {
+        const apiScripts = await fetchScriptData();
+        if (apiScripts && apiScripts.length > 0) {
+          const transformedScripts = transformApiData(apiScripts);
+          setScripts(transformedScripts);
+        } else {
+          setScripts([]);
+        }
+      } catch (err) {
+        console.error("Error loading scripts:", err);
+        setScripts([]);
+      }
+    };
+
+    loadScripts();
+  }, []);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -107,7 +108,7 @@ const RecentScripts = () => {
   };
 
   const handleAddScene = (scriptId: string) => {
-    console.log('Add scene to script:', scriptId);
+    router.push(`/dashboard/script/${scriptId}/scene/create`);
   };
 
   const handleDeleteScript = (scriptId: string) => {
@@ -125,6 +126,57 @@ const RecentScripts = () => {
       year: 'numeric'
     });
   };
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold text-white">Recent Scripts</h2>
+            <p className="text-gray-400 text-sm">Loading your scripts...</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          {[1, 2, 3].map((i) => (
+            <Card key={i} className="bg-black/40 backdrop-blur-sm border-gray-800 animate-pulse">
+              <CardHeader>
+                <div className="h-4 bg-gray-700 rounded w-3/4"></div>
+                <div className="h-3 bg-gray-700 rounded w-1/2"></div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="h-3 bg-gray-700 rounded"></div>
+                  <div className="h-3 bg-gray-700 rounded w-5/6"></div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold text-white">Recent Scripts</h2>
+            <p className="text-red-400 text-sm">{error}</p>
+          </div>
+          <Button 
+            onClick={() => window.location.reload()}
+            className="bg-white text-black hover:bg-gray-100 font-medium"
+            size="sm"
+          >
+            Retry
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -331,7 +383,7 @@ const RecentScripts = () => {
       </div>
 
       {/* Empty State */}
-      {scripts.length === 0 && (
+      {scripts.length === 0 && !loading && (
         <div className="text-center py-12">
           <div className="relative">
             <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 via-blue-500/20 to-pink-500/20 rounded-full blur-3xl"></div>

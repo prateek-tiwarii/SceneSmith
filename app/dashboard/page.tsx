@@ -73,7 +73,7 @@ const DashboardPage = () => {
 
       <div className='flex flex-col gap-2 h-full'>
         <div className='text-sm font-bold text-[#F8F8F8]'>
-          Recent Forms
+          Recent Work
         </div>
         <RecentScripts/>
       </div>

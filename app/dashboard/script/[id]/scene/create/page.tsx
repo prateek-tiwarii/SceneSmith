@@ -1,6 +1,6 @@
 'use client'
 import React, { useState } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useParams, useSearchParams } from 'next/navigation'
 import ScenePreview from '@/components/createScene/ElementPreview'
 import SceneSelector from '@/components/createScene/ElememtSelector'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Clock } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
+
 // import SceneEditor from './SceneEditor' // For batch operations, scene management
 
 interface SceneFormData {
@@ -42,8 +43,9 @@ const CreateNewScene = () => {
     status: "pending"
   });
 
-  const searchParams = useSearchParams()
-  const scriptId = searchParams.get('scriptId') // Get script context
+  const params = useParams();
+  const scriptId = params.id as string; // Get script ID from URL parameters
+  // Get script context
 
   const handleSceneChange = (updatedScene: SceneFormData) => {
     setScene(updatedScene);
@@ -66,11 +68,8 @@ const CreateNewScene = () => {
   return (
     <div className="flex">
       {/* Left Sidebar (Scene Selector) */}
-      <div className="w-3/12 h-[calc(100vh-56px)] sticky overflow-hidden">
-        <SceneSelector 
-          scriptData={mockScriptData} 
-          onSceneChange={handleSceneChange} 
-        />
+      <div className="w-1/3 h-[calc(100vh-56px)] sticky overflow-hidden">
+        <SceneSelector projectId = {scriptId} />
       </div>
 
       {/* Main Content (Scene Preview) */}
@@ -82,8 +81,9 @@ const CreateNewScene = () => {
       </div>
 
       {/* Right Sidebar (Scene Management/Batch Operations) */}
-      <div className="w-3/12 h-[calc(100vh-56px)] sticky overflow-hidden bg-[#1D1E21] border-l-[1px] border-[#2E2E2E]">
-        <div className="p-4 space-y-4">
+     <div className="w-1/5 h-[calc(100vh-56px)] sticky top-[56px] bg-[#1D1E21] border-l border-[#2E2E2E]">
+           <ScrollArea className="h-full">
+            <div className="p-4 space-y-4">
           <h2 className="text-white font-medium">Scene Management</h2>
           
           {/* Quick Actions */}
@@ -164,32 +164,11 @@ const CreateNewScene = () => {
             </CardContent>
           </Card>
 
-          {/* Script Scenes Overview */}
-          <Card className="bg-[#2A2D34] border-[#3A3A3A]">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm text-[#C0C0C0]">All Scenes</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ScrollArea className="h-32">
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between p-2 bg-[#7D5FF3]/10 border border-[#7D5FF3]/20 rounded text-xs">
-                    <span className="text-[#7D5FF3]">Scene #1 (Current)</span>
-                    <Badge className="bg-[#7D5FF3]/20 text-[#7D5FF3] text-xs">Active</Badge>
-                  </div>
-                  <div className="flex items-center justify-between p-2 bg-[#1A1C22] rounded text-xs">
-                    <span className="text-[#8E8E90]">Scene #2</span>
-                    <Badge className="bg-green-500/20 text-green-400 text-xs">Done</Badge>
-                  </div>
-                  <div className="flex items-center justify-between p-2 bg-[#1A1C22] rounded text-xs">
-                    <span className="text-[#8E8E90]">Scene #3</span>
-                    <Badge className="bg-gray-500/20 text-gray-400 text-xs">Draft</Badge>
-                  </div>
-                </div>
-              </ScrollArea>
-            </CardContent>
-          </Card>
+          </div>
+
+         </ScrollArea>
         </div>
-      </div>
+      
     </div>
   )
 }

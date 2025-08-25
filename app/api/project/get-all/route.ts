@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
     
     const scripts = await Script.find({ author: session.user?.id }).populate("author", "name email");
     
-    return NextResponse.json(scripts, { status: 200 });
+    return NextResponse.json({scripts}, { status: 200 });
   } catch (error) {
     console.error("Error fetching scripts:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
