@@ -1,4 +1,4 @@
-'use client'
+ 'use client'
 import React, { useEffect, useState } from 'react'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -18,7 +18,6 @@ interface SceneFormData {
   modelUsed: string;
   order: number;
   negativePrompt: string;
-  // Auto-generated fields (read-only)
   generatedPrompt: string;
   status: 'pending' | 'completed' | 'failed';
 }
@@ -48,8 +47,15 @@ const generatePrompt = async(ScriptDescription :string , title:string , negative
 }
 
 
+type Props = {
+  projectId: string;
+  scene: SceneFormData;
+  setScene: React.Dispatch<React.SetStateAction<SceneFormData>>;
+};
 
-const SceneSelector = ({ projectId }: { projectId?: string }) => {
+
+
+export default function SceneSelector({ projectId, scene, setScene }: Props) {
   const [activeTab, setActiveTab] = useState("basic");
   const [loading, setLoading] = useState(true);
   const [script, setScript] = useState<ScriptDataInterface>({
@@ -60,16 +66,7 @@ const SceneSelector = ({ projectId }: { projectId?: string }) => {
     tags: []
   });
 
-  const [scene, setScene] = useState<SceneFormData>({
-    title: "",
-    description: "",
-    resolution: "1024x1024",
-    modelUsed: "lama2.0",
-    order: 1,
-    negativePrompt: "",
-    generatedPrompt: "",
-    status: "pending"
-  });
+  
 
   const fetchScriptData = async (id: string) => {
     try {
@@ -190,6 +187,7 @@ const SceneSelector = ({ projectId }: { projectId?: string }) => {
     
     setScene(updatedScene);
   };
+
 
   if (loading) {
     return (
@@ -458,4 +456,3 @@ const SceneSelector = ({ projectId }: { projectId?: string }) => {
   );
 };
 
-export default SceneSelector;

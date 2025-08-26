@@ -3,14 +3,16 @@ import { v4 as uuidv4 } from "uuid";
 
 export async function POST(req: NextRequest) {
   try {
-    const { prompt, width, height, model } = await req.json();
+    const { prompt, width, height, model, negativePrompt } = await req.json();
 
     if (!prompt) {
       return NextResponse.json({ error: "Prompt is required" }, { status: 400 });
     }
-   
+
+  
     const taskUUID = uuidv4();
 
+    
     const requestBody = [
       {
         taskType: "imageInference",
@@ -18,9 +20,10 @@ export async function POST(req: NextRequest) {
         outputType: "URL",
         outputFormat: "JPG",
         positivePrompt: prompt,
+        negativePrompt: negativePrompt,
         height: height || 1024,
         width: width || 1024,
-        model: model || "runware:101@1", 
+        model: model || "runware:101@1",
         steps: 20,
         CFGScale: 7.5,
         numberResults: 1

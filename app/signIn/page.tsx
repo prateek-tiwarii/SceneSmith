@@ -10,7 +10,7 @@ const AuthPage = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
 
-  // Loading state (when NextAuth is still checking session)
+  
   if (status === "loading") {
     return (
       <div className="flex h-screen w-screen items-center justify-center bg-[#0E0D13] text-white">
@@ -19,7 +19,7 @@ const AuthPage = () => {
     );
   }
 
-  // If user is logged in
+ 
   if (session) {
     return (
       <div className="flex h-screen w-screen bg-[#0E0D13] items-center justify-center">

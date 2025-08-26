@@ -6,20 +6,7 @@ import Script from "@/models/scriptModel";
 import { connectDB } from "@/utils/connectToDb";
 
 
-const generatePrompt = async(ScriptDescription :string , title:string , negative:string , resolution:string , genre:string , SceneDescription:string )=>{
 
-    const prompt = `You are a scene generator. Create a scene based on the following details:
-    - Script Description: ${ScriptDescription}
-    - Title: ${title}
-    - Negative Prompt: ${negative}
-    - Resolution: ${resolution}
-    - Genre: ${genre}
-    - Scene Description: ${SceneDescription}
-    `;
-
-    return prompt;
-
-}
 
 
 export async function POST(req: NextRequest , { params }: { params: { id: string } }) {
@@ -37,9 +24,9 @@ export async function POST(req: NextRequest , { params }: { params: { id: string
             return NextResponse.json({ error: "Script ID is required" }, { status: 400 });
         }
 
-        const{title , description , negativePrompt , order ,resolution } = await req.json();
+        const{title , description , negativePrompt , prompt , order ,imageUrl } = await req.json();
 
-        if(!title || !description || !negativePrompt || !order || !resolution) {
+        if(!title || !imageUrl || !negativePrompt || !order ) {
             return NextResponse.json({ error: "All fields are required" }, { status: 400 });
         }
 
@@ -48,16 +35,17 @@ export async function POST(req: NextRequest , { params }: { params: { id: string
             return NextResponse.json({ error: "Script not found" }, { status: 404 });
         }
 
-        const prompt = await generatePrompt(script.description, title, negativePrompt, resolution, script.genre, description);
+        
 
         const newScene = new Scene({
             scriptId,
             title,
             description,
             negativePrompt,
+            imageUrl,
             order,
             prompt,
-            resolution
+            status : "completed"
         });
 
         await newScene.save();

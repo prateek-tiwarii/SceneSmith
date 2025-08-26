@@ -13,6 +13,7 @@ import {
 import Link from 'next/link'
 import { Skeleton } from '../ui/skeleton'
 
+
 const Header = () => {
   // For now, mock static values
   const loading = false
@@ -20,6 +21,7 @@ const Header = () => {
 
   const showFormTitle = true
   const showBackButton = true
+  
 
   return (
     <div className="sticky top-0 left-0 right-0 z-50 text-[#F8F8F8] border-b border-[#4B4B4B] bg-[#171717] px-4 py-2 flex items-center h-14 justify-between">

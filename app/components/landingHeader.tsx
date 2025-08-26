@@ -1,6 +1,12 @@
-import React from 'react'
+"use client"
+
+import React, { use } from 'react'
+import { useRouter } from 'next/navigation';
+
 
 const LandingHeader = () => {
+
+  const router = useRouter();
   return (
     <div className="max-w-6xl mx-auto mt-6 px-6 py-3 flex items-center justify-between 
       bg-gradient-to-r from-[#030416] to-[#11111F] border border-white rounded-3xl 
@@ -26,7 +32,7 @@ const LandingHeader = () => {
 
       
       <div>
-        <a href="#" className="hover:underline text-sm font-medium">Login / Signup</a>
+        <a onClick={ () =>router.push('/signIn')} className="hover:underline text-sm font-medium">Login / Signup</a>
       </div>
     </div>
   )

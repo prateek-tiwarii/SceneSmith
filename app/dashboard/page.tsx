@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation'
 // import { useAuth } from '@/hooks/useAuth'
 import axios from 'axios'
 import RecentScripts from '@/components/dashboard/RecentScript'
+import { useSession } from 'next-auth/react'
 
 
 
@@ -16,6 +17,7 @@ const DashboardPage = () => {
 
 //   const { user, loading } = useAuth()
   const router = useRouter()
+  const { data: session } = useSession();
   const [stats, setStats] = React.useState<any>(null)
   const [createFormModal, setCreateFormModal] = useState(false)
 
@@ -41,7 +43,7 @@ const DashboardPage = () => {
       <div className='flex justify-between items-center'>
         <div className='flex flex-col gap-1'>
           <div className='text-2xl font-bold text-[#F8F8F8]'>
-            Hey, user 👋
+            Hey, {session?.user?.name} 👋
           </div>
 
           <div className='text-sm text-gray-500'>
