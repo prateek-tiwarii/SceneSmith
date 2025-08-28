@@ -1,9 +1,16 @@
+import { auth } from "@/auth";
 import { NextRequest, NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
 
 export async function POST(req: NextRequest) {
   try {
     const { prompt, width, height, model, negativePrompt } = await req.json();
+
+    const session = await auth();
+
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     if (!prompt) {
       return NextResponse.json({ error: "Prompt is required" }, { status: 400 });
@@ -42,6 +49,7 @@ export async function POST(req: NextRequest) {
     });
 
     const data = await response.json();
+
     
     console.log("Response:", JSON.stringify(data, null, 2));
 

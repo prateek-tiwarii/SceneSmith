@@ -17,6 +17,16 @@ export async function POST(request: NextRequest) {
     if (!title || !description || !genre || !negativePrompt) {
       return NextResponse.json({ error: "All fields are required" }, { status: 400 });
     }
+    
+    const existingScript = await Script.findOne({
+      author: userId,
+      title,
+    })
+
+    if(existingScript){
+      return NextResponse.json({ error: "Script already exists" }, { status: 409 });
+    }
+
     const newScript = new Script({
       title,
       description,

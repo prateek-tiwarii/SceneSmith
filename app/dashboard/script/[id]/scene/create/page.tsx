@@ -1,8 +1,6 @@
-
-
 'use client'
 import React, { useState } from 'react'
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import ScenePreview from '@/components/createScene/ElementPreview'
 import SceneSelector from '@/components/createScene/ElememtSelector'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -11,6 +9,7 @@ import { Clock } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import axios from 'axios'
+import toast from 'react-hot-toast'
 
 
 
@@ -40,43 +39,48 @@ const CreateNewScene = () => {
 
   const params = useParams();
   const scriptId = params.id as string;
+  const router = useRouter();
 
   const handleGenerate = async () => {
-    setScene(prev => ({ ...prev, status: 'pending' }));
+  setScene(prev => ({ ...prev, status: "pending" }));
 
-    try {
-      // Parse resolution to get width and height
-      const [width, height] = scene.resolution.split('x').map(Number);
+  try {
+    const [width, height] = scene.resolution.split("x").map(Number);
 
-      const res = await fetch("/api/generate-image", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          prompt: scene.generatedPrompt,
-          width: width,
-          height: height,
-          model: scene.modelUsed,
-          negativePrompt: scene.negativePrompt // ✅ Fixed property name
-        })
-      });
+    const res = await fetch("/api/generate-image", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        prompt: scene.generatedPrompt,
+        width,
+        height,
+        model: scene.modelUsed,
+        negativePrompt: scene.negativePrompt,
+      }),
+    });
 
-      const data = await res.json();
-      
-      if (res.ok && data.data && data.data[0] && data.data[0].imageURL) {
-        setScene(prev => ({
-          ...prev,
-          status: "completed",
-          imageURL: data.data[0].imageURL 
-        }));
-      } else {
-        console.error("API Error:", data);
-        setScene(prev => ({ ...prev, status: "failed" }));
-      }
-    } catch (err) {
-      console.error("Image generation error:", err);
+    const data = await res.json();
+
+   
+    const imageUrl = data?.[0]?.results?.[0]?.output;
+
+    if (res.ok && imageUrl) {
+      setScene(prev => ({
+        ...prev,
+        status: "completed",
+        imageURL: imageUrl,
+      }));
+    } else {
+      console.error("API Error:", data);
       setScene(prev => ({ ...prev, status: "failed" }));
     }
-  };
+  } catch (err) {
+    console.error("Image generation error:", err);
+    toast.error("Image generation failed");
+    setScene(prev => ({ ...prev, status: "failed" }));
+  }
+};
+
 
 
   const handleAccept = async() => {
@@ -90,11 +94,13 @@ const CreateNewScene = () => {
       imageUrl : scene.imageURL
     });
 
-    if(request.ok) {
-      console.log("Scene accepted successfully:" );
-    }
+if (request.status === 200) {
+ toast.success('Scene saved successfully!')
+ router.push('/dashboard')
+}
 
     } catch (error) {
+      toast.error('Failed to save scene')
       console.error("Error accepting scene:", error);
     }
     

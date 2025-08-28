@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { X, Plus, Sparkles, Film, Palette } from 'lucide-react';
 import axios from 'axios';
+import toast from 'react-hot-toast';
 
 interface ScriptFormData {
   title: string;
@@ -67,6 +68,9 @@ const ScriptSelector: React.FC<ScriptSelectorProps> = ({ onScriptChange }) => {
   const handleSubmit = async()=>{
     const response = await axios.post('/api/project/create-new',script)
     console.log('Script created:', response.data);
+    if(response.status === 201){
+      toast.success('Script created successfully!')
+    }
     setScript({
       title: "",
       description: "",

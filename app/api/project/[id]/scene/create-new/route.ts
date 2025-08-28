@@ -35,7 +35,14 @@ export async function POST(req: NextRequest , { params }: { params: { id: string
             return NextResponse.json({ error: "Script not found" }, { status: 404 });
         }
 
-        
+        const existingScene = await Scene.findOne({
+         scriptId,
+         title, 
+          });
+
+        if (existingScene) {
+            return NextResponse.json({ error: "Scene already exists" }, { status: 409 });
+        }
 
         const newScene = new Scene({
             scriptId,
@@ -49,6 +56,9 @@ export async function POST(req: NextRequest , { params }: { params: { id: string
         });
 
         await newScene.save();
+        await Script.findByIdAndUpdate(scriptId, { $push: { scenes: newScene._id } });
+       
+
 
         return NextResponse.json({ message: "Scene created successfully", scene: newScene }, { status: 201 });
     } catch (error) {

@@ -4,8 +4,6 @@ import React from 'react'
 import { motion } from "framer-motion";
 
 
-
-
 const HowDoesItWorks = () => {
   return (
      <div className="text-[#F8F8F8] -mt-32 px-4 md:px-6 py-20 flex bg-[#010213] flex-col gap-10 items-center justify-center relative overflow-hidden">
@@ -32,7 +30,7 @@ const HowDoesItWorks = () => {
           className="relative w-full max-w-5xl md:rounded-xl rounded-md overflow-hidden shadow-xl z-10 border-2 border-[#4B4B4B] md:p-2 p-1"
         >
           <video
-            src="/Demo.mp4"
+            src="/DemoVideo.mp4"
             className="rounded-xl w-full h-auto opacity-80  shadow-lg"
             autoPlay
             loop

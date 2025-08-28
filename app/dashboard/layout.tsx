@@ -6,7 +6,7 @@ import Sidebar from "@/components/dashboard/Sidebar"
 import { DndProvider } from "react-dnd"
 import { HTML5Backend } from "react-dnd-html5-backend"
 import Header from "@/components/dashboard/Header"
-import { ToastContainer, toast } from 'react-toastify';
+import { Toaster } from 'react-hot-toast'
 // import { useAuth } from "@/hooks/useAuth"
 
 export default function DashboardLayout({
@@ -45,7 +45,7 @@ export default function DashboardLayout({
           {/* Scrollable children only */}
           <div className="flex-1 overflow-y-auto">
             {children}
-            <ToastContainer />
+            <Toaster position="top-right" />
           </div>
         </DndProvider>
       </div>

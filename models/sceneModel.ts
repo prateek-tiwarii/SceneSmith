@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+
 const SceneSchema = new mongoose.Schema(
   {
     scriptId: {
