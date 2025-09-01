@@ -62,7 +62,7 @@ const CreateNewScene = () => {
     const data = await res.json();
 
    
-    const imageUrl = data?.[0]?.results?.[0]?.output;
+    const imageUrl = data?.data?.[0]?.imageURL;
 
     if (res.ok && imageUrl) {
       setScene(prev => ({
@@ -84,7 +84,10 @@ const CreateNewScene = () => {
 
 
   const handleAccept = async() => {
+
+    console.log('=== handleAccept START ===');
     try{
+      console.log('About to make API call...');
       const request = await axios.post(`/api/project/${scriptId}/scene/create-new`, {
       title : scene.title,
       description : scene.description,
@@ -94,10 +97,20 @@ const CreateNewScene = () => {
       imageUrl : scene.imageURL
     });
 
-if (request.status === 200) {
- toast.success('Scene saved successfully!')
- router.push('/dashboard')
-}
+      console.log('API call completed');
+    console.log('Response status:', request.status); 
+    console.log('Response data:', request.data); 
+    console.log('About to check status condition...');
+
+ if (request.status === 201 || request.status === 200) {
+      console.log('Status check PASSED - showing toast and redirecting');
+      toast.success('Scene saved successfully!')
+      console.log('Toast called');
+      router.push('/dashboard')
+      console.log('Router push called');
+    } else {
+      console.log('Status check FAILED:', request.status);
+    }
 
     } catch (error) {
       toast.error('Failed to save scene')

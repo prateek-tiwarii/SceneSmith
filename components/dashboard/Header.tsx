@@ -49,7 +49,7 @@ const Header = () => {
         {showBackButton && (
           <div className="flex gap-2">
             <Button className="bg-[#7D5FF3] text-white hover:bg-[#7D5FF3]/80">
-              Save
+              Premium+
             </Button>
           </div>
         )}

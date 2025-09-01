@@ -9,8 +9,10 @@ import { auth } from "@/auth";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
+ 
+
   try {
     await connectDB();
 
@@ -19,17 +21,16 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // const scriptId =  params.id;
-    // if (!scriptId) {
-    //   return NextResponse.json({ error: "Script ID is required" }, { status: 400 });
-    // }
-
-      const { id } = await context.params; // ✅ must await
-    if (!id) {
+    const { id } = await context.params; 
+     const scriptId = id;
+    if (!scriptId) {
       return NextResponse.json({ error: "Script ID is required" }, { status: 400 });
     }
 
-    const script = await Script.findById(id).populate("author", "name email").populate("scenes");
+       const script = await Script.findById(scriptId).populate("author", "name email");
+      //  if (script.scenes && script.scenes.length > 0) {
+      //         await script.populate("scenes");
+      //         }
 
     if (!script) {
       return NextResponse.json({ error: "Script not found" }, { status: 404 });

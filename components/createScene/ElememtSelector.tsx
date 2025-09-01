@@ -72,7 +72,7 @@ export default function SceneSelector({ projectId, scene, setScene }: Props) {
     try {
       setLoading(true);
       const response = await fetch(`/api/project/${id}`);
-      console.log(response);
+      // console.log(response);
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

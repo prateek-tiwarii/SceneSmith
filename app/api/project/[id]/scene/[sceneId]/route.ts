@@ -6,6 +6,8 @@ import { NextRequest , NextResponse } from "next/server";
 import { auth } from "@/auth";
 
 
+
+
 export async function PATCH(request :NextRequest , {params}: {params: {id: string}}) {
     try {
         await connectDB();

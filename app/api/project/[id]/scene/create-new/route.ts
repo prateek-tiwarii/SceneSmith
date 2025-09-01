@@ -9,7 +9,10 @@ import { connectDB } from "@/utils/connectToDb";
 
 
 
-export async function POST(req: NextRequest , { params }: { params: { id: string } }) {
+export async function POST(
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
     try{
         await connectDB();
 
@@ -18,7 +21,8 @@ export async function POST(req: NextRequest , { params }: { params: { id: string
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const scriptId = params.id;
+         const { id } = await context.params;
+          const scriptId = id;
 
         if (!scriptId) {
             return NextResponse.json({ error: "Script ID is required" }, { status: 400 });

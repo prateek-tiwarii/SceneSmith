@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 
 interface Script {
   id: string;
@@ -49,8 +50,8 @@ const RecentScripts = () => {
     try {
       setLoading(true);
       const response = await axios.get('/api/project/get-all');
-      console.log(response.data);
       return response.data.scripts;
+
     } catch (error) {
       console.error("Error fetching script data:", error);
       setError("Failed to fetch scripts");
@@ -59,6 +60,8 @@ const RecentScripts = () => {
       setLoading(false);
     }
   };
+
+
 
   // Transform API data to match our interface
   const transformApiData = (apiScripts: any[]): Script[] => {
@@ -104,19 +107,33 @@ const RecentScripts = () => {
   };
 
   const handleEditScript = (scriptId: string) => {
-    console.log('Edit script:', scriptId);
+    router.push(`/dashboard/script/${scriptId}`);
   };
 
   const handleAddScene = (scriptId: string) => {
     router.push(`/dashboard/script/${scriptId}/scene/create`);
   };
 
-  const handleDeleteScript = (scriptId: string) => {
-    setScripts(scripts.filter(script => script.id !== scriptId));
-  };
+  const handleDeleteScript = async (scriptId: string) => {
+  try {
+    const response = await axios.delete(`/api/project/${scriptId}`);
+
+    if (response.status === 200) {
+      toast.success('Script deleted successfully!');
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000); 
+    }
+  } catch (error) {
+    console.error(error);
+    toast.error('Failed to delete script!');
+  }
+};
+
 
   const handleViewScript = (scriptId: string) => {
-    console.log('View script:', scriptId);
+    router.push(`/dashboard/script/${scriptId}`);
   };
 
   const formatDate = (dateString: string) => {

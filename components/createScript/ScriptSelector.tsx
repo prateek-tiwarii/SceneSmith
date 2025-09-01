@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { X, Plus, Sparkles, Film, Palette } from 'lucide-react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
 
 interface ScriptFormData {
   title: string;
@@ -35,6 +36,8 @@ const ScriptSelector: React.FC<ScriptSelectorProps> = ({ onScriptChange }) => {
     tags: []
   });
   const [tagInput, setTagInput] = useState("");
+
+  const router = useRouter();
 
   const genrePresets = [
     "Sci-Fi", "Fantasy", "Anime", "Noir", "Horror", "Romance", 
@@ -65,6 +68,8 @@ const ScriptSelector: React.FC<ScriptSelectorProps> = ({ onScriptChange }) => {
     updateScript({ tags: script.tags.filter(tag => tag !== tagToRemove) });
   };
 
+  
+
   const handleSubmit = async()=>{
     const response = await axios.post('/api/project/create-new',script)
     console.log('Script created:', response.data);
@@ -78,6 +83,10 @@ const ScriptSelector: React.FC<ScriptSelectorProps> = ({ onScriptChange }) => {
       negativePrompt: "",
       tags: []
     });
+
+    router.push('/dashboard');
+
+    
     
   }
 
