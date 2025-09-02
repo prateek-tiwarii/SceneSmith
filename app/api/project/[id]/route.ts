@@ -5,6 +5,9 @@ import { NextResponse, NextRequest } from "next/server";
 import { connectDB } from "@/utils/connectToDb";
 import { auth } from "@/auth";
 
+Scene;
+User;
+
 
 
 export async function GET(
@@ -28,13 +31,15 @@ export async function GET(
     }
 
        const script = await Script.findById(scriptId).populate("author", "name email");
-      //  if (script.scenes && script.scenes.length > 0) {
-      //         await script.populate("scenes");
-      //         }
 
     if (!script) {
       return NextResponse.json({ error: "Script not found" }, { status: 404 });
     }
+
+    
+       if (script.scenes && script.scenes.length > 0) {
+              await script.populate("scenes");
+              }
 
     return NextResponse.json(script, { status: 200 });
   } catch (error) {

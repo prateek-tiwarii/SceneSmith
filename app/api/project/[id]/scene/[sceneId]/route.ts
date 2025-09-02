@@ -39,7 +39,7 @@ export async function PATCH(request :NextRequest , {params}: {params: {id: strin
 }
 
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: { id: string; sceneId: string } }) {
     try{
        await connectDB();
 
@@ -48,7 +48,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
        }
 
-       const sceneId = params.id;
+        const sceneId = params.sceneId;
        if (!sceneId) {
            return NextResponse.json({ error: "Scene ID is required" }, { status: 400 });
        }
