@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import StatCard from '@/components/dashboard/StatCard'
 
 import { CheckCheck, File, Sparkles, Film } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { redirect, useRouter } from 'next/navigation'
 
 import axios from 'axios'
 import RecentScripts from '@/components/dashboard/RecentScript'
@@ -16,7 +16,12 @@ const DashboardPage = () => {
   const router = useRouter()
   const { data: session } = useSession();
   const user = session?.user?.id
-  
+
+  if (!user) {
+    redirect('/signIn')
+    
+  }
+
   const [loading, setLoading] = useState<boolean>(true);
   const [sceneCount, setSceneCount] = useState<number>(0);
   const [scriptCount, setScriptCount] = useState<number>(0);

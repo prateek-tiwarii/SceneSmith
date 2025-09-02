@@ -160,47 +160,9 @@ const CreateNewScene = () => {
           <div className="p-4 space-y-4">
             <h2 className="text-white font-medium">Scene Management</h2>
 
-            
-            <Card className="bg-[#2A2D34] border-[#3A3A3A]">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm text-[#C0C0C0]">Quick Actions</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <Button size="sm" className="w-full bg-[#7D5FF3] hover:bg-[#6B47E0] text-white">
-                  Save Scene
-                </Button>
-                <Button size="sm" variant="outline" className="w-full border-[#3A3A3A] text-[#C0C0C0] hover:bg-[#2A2D34]">
-                  Duplicate Scene
-                </Button>
-                <Button size="sm" variant="outline" className="w-full border-red-500/50 text-red-400 hover:bg-red-500/10">
-                  Delete Scene
-                </Button>
-              </CardContent>
-            </Card>
-
+         
            
-            <Card className="bg-[#2A2D34] border-[#3A3A3A]">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm text-[#C0C0C0] flex items-center gap-2">
-                  <Clock className="w-4 h-4" />
-                  Generation History
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2 text-xs">
-                  <div className="flex justify-between items-center p-2 bg-[#1A1C22] rounded">
-                    <span className="text-[#8E8E90]">Attempt #1</span>
-                    <Badge className="bg-green-500/20 text-green-400 text-xs">Success</Badge>
-                  </div>
-                  <div className="flex justify-between items-center p-2 bg-[#1A1C22] rounded">
-                    <span className="text-[#8E8E90]">Attempt #2</span>
-                    <Badge className="bg-red-500/20 text-red-400 text-xs">Failed</Badge>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            
+             
             <Card className="bg-[#2A2D34] border-[#3A3A3A]">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm text-[#C0C0C0]">Statistics</CardTitle>

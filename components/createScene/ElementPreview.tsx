@@ -25,7 +25,7 @@ interface SceneFormData {
   order: number;
   negativePrompt: string;
   generatedPrompt: string;
-  status: "pending" | "completed" | "failed";
+  status: 'idle' | 'pending' | 'completed' | 'failed';
   imageURL?: string;
 }
 

@@ -1,7 +1,9 @@
 import NextAuth from "next-auth"
 import Google from "next-auth/providers/google"
-import { connectDB } from "./utils/connectToDb";
+
 import User from "./models/userModel";
+import { connectDB } from "./utils/connectToDb";
+
 
  
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -33,18 +35,28 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
     },
 
-    async session({ session}) {
-      // attach the user id from token to session
-     await connectDB();
-      const dbUser = await User.findOne({ email: session.user?.email });
+    // async session({ session}) {
+    //   // attach the user id from token to session
+    //  await connectDB();
+    //   const dbUser = await User.findOne({ email: session.user?.email });
 
-      if (dbUser) {
-        session.user.id = dbUser._id.toString();
-      }
+    //   if (dbUser) {
+    //     session.user.id = dbUser._id.toString();
+    //   }
 
-      return session;
-    },
-    async jwt({ token, user }) {
+    //   return session;
+    // },
+    // async jwt({ token, user }) {
+    //   if (user) {
+    //     await connectDB();
+    //     const dbUser = await User.findOne({ email: user.email });
+    //     token.id = dbUser?._id.toString();
+    //   }
+    //   return token;
+    // },
+
+
+     async jwt({ token, user }) {
       if (user) {
         await connectDB();
         const dbUser = await User.findOne({ email: user.email });
@@ -53,6 +65,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return token;
     },
 
+    async session({ session, token }) {
+      
+      if (token.id) {
+        session.user.id = token.id as string;
+      }
+      return session;
+    },
+
   }
 
 })
+
+
