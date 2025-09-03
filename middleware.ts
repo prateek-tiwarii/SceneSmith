@@ -1,7 +1,8 @@
-// export { auth as middleware } from "@/auth"
-
-export { auth as default } from "@/auth"
+// Use the Edge-safe auth that doesn't pull in Node-only modules (mongodb/crypto)
+export { auth as default } from "@/auth-edge"
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  matcher: [    
+    "/((?!api/auth|_next/static|_next/image|favicon.ico).*)"
+  ],
 }

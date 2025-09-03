@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import React from 'react';
 import {
   AnimatePresence,
   HTMLMotionProps,
@@ -24,7 +25,7 @@ export function Pointer({
   style,
   children,
   ...props
-}: PointerProps): JSX.Element {
+}: PointerProps): React.JSX.Element {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const [isActive, setIsActive] = useState<boolean>(false);

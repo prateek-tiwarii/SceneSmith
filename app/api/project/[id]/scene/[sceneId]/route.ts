@@ -1,3 +1,4 @@
+export const runtime = 'nodejs'
 import mongoose from "mongoose";
 import Scene from "@/models/sceneModel";
 import script from "@/models/scriptModel";
@@ -8,7 +9,7 @@ import { auth } from "@/auth";
 
 
 
-export async function PATCH(request :NextRequest , {params}: {params: {id: string}}) {
+export async function PATCH(request :NextRequest , {params}: {params: Promise<{id: string; sceneId: string}>}) {
     try {
         await connectDB();
 
@@ -17,7 +18,7 @@ export async function PATCH(request :NextRequest , {params}: {params: {id: strin
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const sceneId = params.id;
+    const { sceneId } = await params;
         if (!sceneId) {
             return NextResponse.json({ error: "Scene ID is required" }, { status: 400 });
         }
@@ -39,7 +40,7 @@ export async function PATCH(request :NextRequest , {params}: {params: {id: strin
 }
 
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string; sceneId: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string; sceneId: string }> }) {
     try{
        await connectDB();
 
@@ -48,7 +49,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
        }
 
-        const sceneId = params.sceneId;
+    const { sceneId } = await params;
        if (!sceneId) {
            return NextResponse.json({ error: "Scene ID is required" }, { status: 400 });
        }

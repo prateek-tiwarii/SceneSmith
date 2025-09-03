@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { Send } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { signIn, signOut, useSession } from "next-auth/react";
+import { Variants } from "framer-motion";
 
 
 
@@ -17,13 +18,13 @@ const {data: session} = useSession()
 
 console.log(session)
 
-  const slideUp = {
+  const slideUp :Variants = {
     hidden: { opacity: 0, y: 60 },
     show: {
       opacity: 1,
       y: 0,
       transition: {
-        type: "spring",
+        type: "spring" as const,
         stiffness: 150,
         damping: 12,
       },

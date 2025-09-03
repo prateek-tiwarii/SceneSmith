@@ -1,4 +1,6 @@
+export const runtime = 'nodejs'
 import Script from "@/models/scriptModel";
+import User from "@/models/userModel";
 import { NextResponse, NextRequest } from "next/server";
 import { connectDB } from "@/utils/connectToDb";    
 import { auth } from "@/auth";
@@ -7,6 +9,8 @@ import { auth } from "@/auth";
 export async function GET(request: NextRequest) {
   try {
     await connectDB();
+  // Ensure the User model is registered in Mongoose before populate
+  User;
     const session = await auth();
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

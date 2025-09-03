@@ -1,3 +1,4 @@
+export const runtime = 'nodejs'
 import Script from "@/models/scriptModel";
 import Scene from "@/models/sceneModel";
 import User from "@/models/userModel";
@@ -5,6 +6,7 @@ import { NextResponse, NextRequest } from "next/server";
 import { connectDB } from "@/utils/connectToDb";
 import { auth } from "@/auth";
 
+// Touch models to ensure Mongoose registers schemas
 Scene;
 User;
 
@@ -24,7 +26,7 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { id } = await context.params; 
+  const { id } = await context.params; 
      const scriptId = id;
     if (!scriptId) {
       return NextResponse.json({ error: "Script ID is required" }, { status: 400 });
@@ -49,7 +51,7 @@ export async function GET(
 }
 
 
-export async function PATCH(request :NextRequest , {params}: {params: {id: string}}) {
+export async function PATCH(request :NextRequest , {params}: {params: Promise<{id: string}>}) {
     try {
         await connectDB();
 
@@ -58,7 +60,7 @@ export async function PATCH(request :NextRequest , {params}: {params: {id: strin
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const scriptId = params.id;
+  const { id: scriptId } = await params;
         if (!scriptId) {
             return NextResponse.json({ error: "Script ID is required" }, { status: 400 });
         }
@@ -79,7 +81,7 @@ export async function PATCH(request :NextRequest , {params}: {params: {id: strin
 }
 
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try{
     await connectDB();
     
@@ -88,7 +90,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const scriptId = params.id;
+  const { id: scriptId } = await params;
     if (!scriptId) {
         return NextResponse.json({ error: "Script ID is required" }, { status: 400 });
     }

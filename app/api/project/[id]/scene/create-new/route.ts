@@ -1,3 +1,4 @@
+export const runtime = 'nodejs'
 import mongoose from "mongoose";
 import Scene from "@/models/sceneModel";
 import { NextRequest, NextResponse } from "next/server";
@@ -10,8 +11,8 @@ import { connectDB } from "@/utils/connectToDb";
 
 
 export async function POST(
-  req: NextRequest,
-  context: { params: Promise<{ id: string }> }
+    req: NextRequest,
+        context: { params: Promise<{ id: string }> }
 ) {
     try{
         await connectDB();

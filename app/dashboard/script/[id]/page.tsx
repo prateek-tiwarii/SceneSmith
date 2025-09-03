@@ -31,11 +31,7 @@ interface Script {
   scenes: Scene[];
 }
 
-interface ScriptUpdateProps {
-  onScriptChange?: (script: Script) => void;
-}
-
-const ScriptUpdate: React.FC<ScriptUpdateProps> = ({ onScriptChange }) => {
+const ScriptUpdate: React.FC = () => {
   const { id } = useParams()
   const [script, setScript] = useState<Script | null>(null);
   const [originalScript, setOriginalScript] = useState<Script | null>(null); 
@@ -136,9 +132,7 @@ const ScriptUpdate: React.FC<ScriptUpdateProps> = ({ onScriptChange }) => {
         setOriginalScript(script); 
         toast.success('Script updated successfully!');
         router.push('/dashboard')
-        if (onScriptChange) {
-          onScriptChange(script);
-        }
+  // no-op
       }
     } catch (err) {
       toast.error('Failed to update script');

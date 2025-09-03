@@ -1,3 +1,4 @@
+export const runtime = 'nodejs'
 import { NextResponse, NextRequest } from "next/server";
 import { auth } from "@/auth";
 import { connectDB } from "@/utils/connectToDb";

@@ -206,6 +206,7 @@ const RecentScripts = () => {
         <Button 
           className="bg-white text-black hover:bg-gray-100 font-medium"
           size="sm"
+          onClick={() => router.push('/dashboard/script/create')}
         >
           <Plus className="w-4 h-4 mr-2" />
           New Script
